@@ -41,5 +41,18 @@ module OpsWorks
         Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /usr/local/bin/bundle install --path #{app_config[:home]}/.bundler/#{app_name} --without=#{app_config[:ignore_bundler_groups].join(' ')} 2>&1'`)
       end
     end
+    
+    def self.precompile_assets(app_root_path, rails_env)
+      if system("cd #{app_root_path} && /usr/local/bin/rake -T | grep assets:precompile 1>/dev/null")
+        Chef::Log.info("Assets detected. Running assets precompile.")
+        Chef::Log.info("sudo su deploy -c 'cd #{app_root_path} && RAILS_ENV=#{rails_env} /usr/local/bin/bundle exec rake assets:precompile'")
+        Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && RAILS_ENV=#{rails_env} /usr/local/bin/bundle exec rake assets:precompile 2>&1'`)
+      end
+    end
+
+    def self.write_sha_to_public(app_root_path)
+      Chef::Log.info("sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD > #{app_root_path}/public/sha.html'")
+      Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD > #{app_root_path}/public/sha.html 2>&1'`)
+    end
   end
 end

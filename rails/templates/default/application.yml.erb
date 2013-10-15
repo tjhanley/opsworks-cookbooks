@@ -1,0 +1,68 @@
+# generated via OpsWorks & Chef
+
+defaults: &defaults
+  app_name: Goatee
+  domain: goatee.dev
+<% (['production'] + [@environment]).uniq.each do |env| -%>
+<%= env %>:
+  <<: *defaults
+  app_name: <%= @settings[:app_name] %>
+  domain: <%= @settings[:app_domain] %>
+  aws:
+    access_key_id: <%= @settings[:aws][:access_key_id] %>
+    secret_access_key: <%= @settings[:aws][:secret_access_key] %>
+    fog_directory: <%= @settings[:aws][:fog_directory] %>
+    fog_provider: <%= @settings[:aws][:fog_provider] %>
+  mailchimp:
+    api: <%= @settings[:mailchimp][:api] %>
+    list_id: <%= @settings[:mailchimp][:list_id] %>
+  mandrill:
+    password: <%= @settings[:mandrill][:password] %>
+  facebook:
+    app_id: <%= @settings[:facebook][:app_id] %>
+    app_secret: <%= @settings[:facebook][:app_secret] %>
+    namespace: <%= @settings[:facebook][:namespace] %>
+  bing:
+    key: <%= @settings[:bing][:key] %>
+    name: <%= @settings[:bing][:name] %>
+  google:
+    ga_id: <%= @settings[:google][:ga_id] %>
+  zendesk:
+    url: <%= @settings[:zendesk][:url] %>
+    api_url: <%= @settings[:zendesk][:api_url] %>
+    username: <%= @settings[:zendesk][:username] %>
+    token: <%= @settings[:zendesk][:token] %>
+    dropboxid: <%= @settings[:zendesk][:dropboxid] %>
+    secret: <%= @settings[:zendesk][:secret] %>
+  stripe:
+    secret: <%= @settings[:stripe][:secret] %>
+    publish: <%= @settings[:stripe][:publish] %>
+    default_plan: <%= @settings[:stripe][:default_plan] %>
+  redis:
+    host: <%= @settings[:redis][:host] %>
+    port: <%= @settings[:redis][:port] %>
+  twitter:
+    consumer_key: <%= @settings[:twitter][:consumer_key]%>
+    consumer_secret: <%= @settings[:twitter][:consumer_secret]%>
+    access_token: <%= @settings[:twitter][:access_token]%>
+    access_secret: <%= @settings[:twitter][:access_secret]%>
+  owd:
+    client_id: <%= @settings[:owd][:client_id] %>
+    client_authorization: <%= @settings[:owd][:client_authorization] %>
+  payment_providers:
+    stripe:
+      name: stripe 
+      key: stripe_customer_id
+  sidekiq:
+    namespace: 'sidekiq'
+  content:
+    host: <%= @settings[:content][:host] %>
+    api_base: <%= @settings[:content][:api_base] %>
+    preview_allowed?: <%= @settings[:content][:preview_allowed] %>
+    default_space: get-advice
+  paynearme:
+    site_identifier: <%= @settings[:paynearme][:site_identifier] %>
+  memcached:
+    hosts: <%= @settings[:memcached][:hosts].to_s -%>
+  
+<% end -%>
