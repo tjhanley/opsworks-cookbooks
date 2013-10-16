@@ -92,10 +92,65 @@ define :opsworks_deploy do
         raise "unsupported SCM type #{deploy[:scm][:scm_type].inspect}"
       end
 
+      before_restart do
+
+        template "#{node[:deploy][application][:deploy_to]}/shared/config/application.yml" do
+          source "application.yml.erb"
+          cookbook 'rails'
+          mode "0660"
+          group deploy[:group]
+          owner deploy[:user]
+          variables(:settings => deploy[:settings], :environment => deploy[:rails_env])
+
+          only_if do
+            File.exists?("#{node[:deploy][application][:deploy_to]}") && File.exists?("#{node[:deploy][application][:deploy_to]}/shared/config/")
+          end
+        end
+
+        execute "start sidekiq #{application}" do
+          command "sudo su deploy -c 'cd #{release_path} && RAILS_ENV=#{node[:deploy][application][:rails_env]} nohup /usr/local/bin/bundle exec sidekiq -C config/sidekiq.yml >> #{release_path}/log/sidekiq.log 2>&1 &'"
+          action :nothing
+          only_if do
+            File.exists?("#{release_path}")
+          end
+        end
+        execute "stop sidekiq #{application}" do
+          command "if ps -p `cat #{release_path}/tmp/pids/sidekiq.pid` > /dev/null
+                    then
+                      kill -s TERM `cat #{release_path}/tmp/pids/sidekiq.pid` > /dev/null 2>&1
+                    else
+                      echo 'sidekiq not running'
+                   fi"
+          action :nothing
+          notifies :run, resources(:execute => "start sidekiq #{application}"), :immediately
+          only_if do
+            File.exists?("#{release_path}") && File.exists?("#{release_path}/tmp/pids/sidekiq.pid")
+          end
+        end
+
+        #  SIDEKIQ
+        template "#{release_path}/config/sidekiq.yml" do
+          Chef::Log.info("Writing Sidekiq Config #{node[:deploy][application][:sidekiq].inspect}")
+          source "sidekiq.yml.erb"
+          cookbook 'rails'
+          mode "0660"
+          group deploy[:group]
+          owner deploy[:user]
+          variables(:sidekiq => node[:deploy][application][:sidekiq], :environment => node[:deploy][application][:rails_env])
+
+          notifies :run, resources(:execute => "stop sidekiq #{application}"), :immediately
+
+          only_if do
+            File.exists?("#{release_path}/config")
+          end
+        end
+      end
+
       before_migrate do
         link_tempfiles_to_current_release
 
         if deploy[:application_type] == 'rails'
+
           if deploy[:auto_bundle_on_deploy]
             OpsWorks::RailsConfiguration.bundle(application, node[:deploy][application], release_path)
           end

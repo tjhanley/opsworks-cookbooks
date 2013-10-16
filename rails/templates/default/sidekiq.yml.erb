@@ -1,0 +1,12 @@
+# Sample configuration file for Sidekiq.
+# Options here can still be overridden by cmd line args.
+#   sidekiq -C config.yml
+---
+:verbose: <%= @sidekiq[:verbose] %>
+:pidfile: <%= @sidekiq[:pidfile] %>
+:logfile: <%= @sidekiq[:logfile] %>
+:concurrency: <%= @sidekiq[:concurrency] %>
+:queues:
+  - [often, 7]
+  - [default, 5]
+  - [seldom, 3]
