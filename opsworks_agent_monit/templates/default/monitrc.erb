@@ -1,9 +1,15 @@
 set daemon 60
-set mailserver localhost
+set mailserver <%= node[:monit][:mailserver][:host] %> port <%= node[:monit][:mailserver][:port] %>
+    username "<%= node[:monit][:mailserver][:username] %>"
+    password "<%= node[:monit][:mailserver][:password] %>"
+
 set eventqueue
     basedir /var/monit
     slots 100
 set logfile syslog
+
+set alert <%= node[:monit][:notify] %> NOT ON { action, instance, pid, ppid }
+
 Include <%= node[:monit][:conf_dir] %>/*.monitrc
 set httpd port 2812 and use the address localhost
   allow localhost

@@ -114,6 +114,7 @@ define :opsworks_deploy do
             File.exists?("#{release_path}")
           end
         end
+
         execute "stop sidekiq #{application}" do
           command "if ps -p `cat #{release_path}/tmp/pids/sidekiq.pid` > /dev/null
                     then
@@ -122,7 +123,6 @@ define :opsworks_deploy do
                       echo 'sidekiq not running'
                    fi"
           action :nothing
-          notifies :run, resources(:execute => "start sidekiq #{application}"), :immediately
           only_if do
             File.exists?("#{release_path}") && File.exists?("#{release_path}/tmp/pids/sidekiq.pid")
           end
@@ -139,6 +139,7 @@ define :opsworks_deploy do
           variables(:sidekiq => node[:deploy][application][:sidekiq], :environment => node[:deploy][application][:rails_env])
 
           notifies :run, resources(:execute => "stop sidekiq #{application}"), :immediately
+          notifies :run, resources(:execute => "start sidekiq #{application}"), :immediately
 
           only_if do
             File.exists?("#{release_path}/config")

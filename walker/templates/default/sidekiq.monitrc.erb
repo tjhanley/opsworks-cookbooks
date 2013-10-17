@@ -1,0 +1,6 @@
+check process sidekiq with pidfile /srv/www/bevel_commerce_goatee/shared/pids/sidekiq.pid
+    start program = "/bin/bash -c '/etc/init.d/sidekiq start & >> /tmp/sidekiq-monit.log'"
+    stop program = "/etc/init.d/sidekiq stop"
+
+
+

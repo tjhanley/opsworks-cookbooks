@@ -1,0 +1,5 @@
+check process unicorn with pidfile /srv/www/bevel_commerce_goatee/shared/pids/unicorn.pid
+    start program = "/bin/bash -c 'cd /srv/www/bevel_commerce_goatee/current && /usr/local/bin/bundle exec unicorn_rails --env production --daemonize -c /srv/www/bevel_commerce_goatee/shared/config/unicorn.conf'"
+        as uid deploy and gid www-data
+    stop program = "/bin/bash -c 'kill -QUIT `cat /srv/www/bevel_commerce_goatee/shared/pids/unicorn.pid`'"
+
