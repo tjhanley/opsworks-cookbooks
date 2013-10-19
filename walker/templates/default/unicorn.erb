@@ -1,0 +1,26 @@
+#!/bin/bash
+
+export PATH=/usr/local/bin:${PATH}
+
+UNICORN=<%= File.join(@locals[:deploy_to],"shared", "scripts", "unicorn") %>
+APP_ROOT=<%= @locals[:current_path] %>
+
+case "$1" in
+        start)
+                echo "Starting unicorn..."
+                $UNICORN start
+                ;;
+        stop)
+                $UNICORN stop && exit 0
+                echo >&2 "Not running"
+                ;;
+        restart)
+                $UNICORN clean-restart
+                ;;
+        status)
+                $UNICORN status
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                ;;
+esac

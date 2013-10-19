@@ -15,6 +15,11 @@ node[:deploy].each do |application, deploy|
   Chef::Log.info "deploy: #{deploy.inspect}"
   Chef::Log.info "deploy: #{application.inspect}"
 
+  locals = {}
+  locals[:deploy_to] = "/srv/www/#{application}"
+  locals[:current_path] = "#{locals[:deploy_to]}/current"
+  locals[:shared_path] = "#{locals[:deploy_to]}/shared"
+  locals[:rails_env] = 'production'
 
   #  setup  nginx, unicorn, sidekiq monit templates
 
@@ -37,20 +42,27 @@ node[:deploy].each do |application, deploy|
     mode "0660"
     group deploy[:group]
     owner deploy[:user]
-    variables(:applicaiton => application)
 
-    #variables(:deploy => deploy, :application => application)
+    variables(:locals => locals, :application => application)
 
     only_if do
       File.exists?("#{node[:monit][:conf_dir]}")
     end
   end
 
-  locals = {}
-  locals[:deploy_to] = "/srv/www/#{application}"
-  locals[:current_path] = "#{locals[:deploy_to]}/current"
-  locals[:shared_path] = "#{locals[:deploy_to]}/shared"
-  locals[:rails_env] = 'production'
+  template File.join("/etc/init.d/",'unicorn') do
+    source "unicorn.erb"
+    cookbook 'walker'
+    mode "0771"
+    group deploy[:group]
+    owner deploy[:user]
+
+    variables(:locals => locals, :application => application)
+
+    only_if do
+      File.exists?("/etc/init.d/")
+    end
+  end
 
   #http://chrisdyer.info/2013/04/06/init-script-for-sidekiq-with-rbenv.html
   template File.join("/etc/init.d/",'sidekiq') do
@@ -67,14 +79,14 @@ node[:deploy].each do |application, deploy|
     end
   end
 
-
   template File.join(node[:monit][:conf_dir],'sidekiq.monitrc') do
     source "sidekiq.monitrc.erb"
     cookbook 'walker'
     mode "0660"
     group deploy[:group]
     owner deploy[:user]
-    #variables(:deploy => deploy, :application => application, :release_path => release_path)
+
+    variables(:locals => locals, :application => application)
 
     only_if do
       File.exists?("#{node[:monit][:conf_dir]}")
