@@ -1,0 +1,24 @@
+defaults: &defaults
+  adapter: <%= @database[:adapter].to_s.inspect %>
+  database: <%= @database[:database].to_s.inspect %>
+  encoding: <%= (@database[:encoding] || 'utf8').to_s.inspect %>
+  username: <%= @database[:username].to_s.inspect %>
+  password: <%= @database[:password].to_s.inspect %>
+<% if @database[:port] -%>
+  port: <%= @database[:port].to_i.inspect %>
+<% end -%>
+
+octopus:
+  replicated: true
+  environments:
+<% (['production'] + [@environment]).uniq.each do |env| -%>
+    - <%= env %>
+<% end %>
+<% (['production'] + [@environment]).uniq.each do |env| -%>
+  <%= env %>:
+  <% @database[:slaves].each_with_index do |slave, index| %>
+    slave_<%= index %>:
+      <<: *defaults
+      host: <%= slave %>
+  <% end %>
+<% end %>
