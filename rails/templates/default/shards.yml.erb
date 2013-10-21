@@ -10,6 +10,7 @@ defaults: &defaults
 
 octopus:
   replicated: true
+  verify_connection: true
   environments:
 <% (['production'] + [@environment]).uniq.each do |env| -%>
     - <%= env %>
