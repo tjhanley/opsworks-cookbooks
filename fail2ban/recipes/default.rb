@@ -39,7 +39,7 @@ end
   end
 end
 
-%w{ proxy nginx-noscript nginx-login nginx-auth }.each do |filter|
+%w{ nginx-proxy nginx-noscript nginx-login nginx-auth }.each do |filter|
   template "/etc/fail2ban/filter.d/#{filter}.conf" do
     source "#{filter}.conf.erb"
     owner "root"
