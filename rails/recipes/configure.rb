@@ -14,7 +14,7 @@ node[:deploy].each do |application, deploy|
 
   template "#{deploy[:deploy_to]}/shared/config/shards.yml" do
     source "shards.yml.erb"
-    cookbook 'walker'
+    cookbook 'rails'
     mode "0660"
     group deploy[:group]
     owner deploy[:user]
