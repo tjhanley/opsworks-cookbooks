@@ -39,6 +39,16 @@ end
   end
 end
 
+%w{ proxy nginx-noscript nginx-login nginx-auth }.each do |filter|
+  template "/etc/fail2ban/filter.d/#{filter}.conf" do
+    source "#{filter}.conf.erb"
+    owner "root"
+    group "root"
+    mode 0644
+    notifies :restart, "service[fail2ban]"
+  end
+end
+
 service "fail2ban" do
   supports [ :status => true, :restart => true ]
   action [ :enable, :start ]
