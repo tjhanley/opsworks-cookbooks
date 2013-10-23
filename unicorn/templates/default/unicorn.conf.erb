@@ -56,4 +56,8 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
+
+  #child processes
+  child_pid = server.config[:pid].sub(".pid", ".#{worker.nr}.pid")
+  system("echo #{Process.pid} > #{child_pid}")
 end

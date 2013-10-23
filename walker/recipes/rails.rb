@@ -9,18 +9,20 @@
 
 Chef::Log.info "All your nodes belong to us..."
 Chef::Log.info "node: #{node[:opsworks].inspect}"
+Chef::Log.info "node: #{node[:unicorn].inspect}"
+
+locals = {}
+locals[:unicorn_workers] = node[:unicorn][:worker_processes]
 
 node[:deploy].each do |application, deploy|
   Chef::Log.info "Setting up Walker Custom Stuff"
   Chef::Log.info "deploy: #{deploy.inspect}"
   Chef::Log.info "deploy: #{application.inspect}"
 
-  locals = {}
   locals[:deploy_to] = "/srv/www/#{application}"
   locals[:current_path] = "#{locals[:deploy_to]}/current"
   locals[:shared_path] = "#{locals[:deploy_to]}/shared"
-  locals[:rails_env] = 'production'
-
+  locals[:rails_env] = deploy[:rails_env]
   #  setup  nginx, unicorn, sidekiq monit templates
 
   template File.join(node[:monit][:conf_dir],'nginx.monitrc') do
