@@ -49,6 +49,8 @@ defaults: &defaults
   owd:
     client_id: <%= @settings[:owd][:client_id] %>
     client_authorization: <%= @settings[:owd][:client_authorization] %>
+  raygun:
+    key: <%= @settings[:raygun][:key] %>
   payment_providers:
     stripe:
       name: stripe 
