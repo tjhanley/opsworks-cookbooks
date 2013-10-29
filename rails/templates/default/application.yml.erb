@@ -3,11 +3,17 @@
 defaults: &defaults
   app_name: Goatee
   domain: goatee.dev
+  basic_auth:
+    enabled?: false
 <% (['production'] + [@environment]).uniq.each do |env| -%>
 <%= env %>:
   <<: *defaults
   app_name: <%= @settings[:app_name] %>
   domain: <%= @settings[:app_domain] %>
+  basic_auth:
+    enabled?: <%= @settings[:basic_auth][:enabled] %>
+    user: <%= @settings[:basic_auth][:user] %>
+    pass: <%= @settings[:basic_auth][:pass] %>
   aws:
     access_key_id: <%= @settings[:aws][:access_key_id] %>
     secret_access_key: <%= @settings[:aws][:secret_access_key] %>
