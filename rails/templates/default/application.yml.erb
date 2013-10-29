@@ -3,8 +3,6 @@
 defaults: &defaults
   app_name: Goatee
   domain: goatee.dev
-  basic_auth:
-    enabled?: false
 <% (['production'] + [@environment]).uniq.each do |env| -%>
 <%= env %>:
   <<: *defaults
