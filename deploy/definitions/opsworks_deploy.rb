@@ -159,7 +159,7 @@ define :opsworks_deploy do
           OpsWorks::RailsConfiguration.precompile_assets(release_path, node[:deploy][application][:rails_env])
           #OpsWorks::RailsConfiguration.write_sha_to_public(release_path)
 
-          template "#{app_root_path}/public/sha.html" do
+          template "#{release_path}/public/sha.html" do
             Chef::Log.info("Writing Sha Release Info ")
             source "sha.html.erb"
             mode "0660"
