@@ -158,10 +158,6 @@ define :opsworks_deploy do
 
           OpsWorks::RailsConfiguration.precompile_assets(release_path, node[:deploy][application][:rails_env])
           #OpsWorks::RailsConfiguration.write_sha_to_public(release_path)
-          execute "get_sha" do
-            command "echo 'Feeding: #{pet_name}'; touch '/tmp/#{pet_name}'"
-            not_if { ::File.exists?("/tmp/#{pet_name}")}
-          end
 
           template "#{release_path}/public/sha.html" do
             Chef::Log.info("Writing Sha Release Info ")
