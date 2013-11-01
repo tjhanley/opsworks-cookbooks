@@ -165,8 +165,8 @@ define :opsworks_deploy do
             mode "0660"
             group deploy[:group]
             owner deploy[:user]
-            sha = system("sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD")
-            variables(:locals => {:sha => sha, :branch => deploy[:scm][:revision]}, :environment => node[:deploy][application][:rails_env])
+            sha = system("sudo su deploy -c 'cd #{release_path} && /usr/bin/git rev-parse HEAD")
+            variables(:locals => {:sha => sha, :branch => deploy[:scm][:revision]})
 
             only_if do
               File.exists?("#{release_path}/public/")
