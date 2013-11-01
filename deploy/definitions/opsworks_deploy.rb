@@ -157,7 +157,8 @@ define :opsworks_deploy do
           end
 
           OpsWorks::RailsConfiguration.precompile_assets(release_path, node[:deploy][application][:rails_env])
-          #OpsWorks::RailsConfiguration.write_sha_to_public(release_path)
+
+
 
           template "#{release_path}/public/sha.html" do
             Chef::Log.info("Writing Sha Release Info ")
@@ -165,13 +166,14 @@ define :opsworks_deploy do
             mode "0660"
             group deploy[:group]
             owner deploy[:user]
-            sha = `sudo su deploy -c 'cd #{release_path} && /usr/bin/git rev-parse HEAD`
+
             variables(:locals => {:sha => sha, :branch => deploy[:scm][:revision]})
 
             only_if do
               File.exists?("#{release_path}/public/")
             end
           end
+          OpsWorks::RailsConfiguration.write_sha_to_public(release_path)
 
           node.default[:deploy][application][:database][:adapter] = OpsWorks::RailsConfiguration.determine_database_adapter(
             application,
