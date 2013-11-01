@@ -169,7 +169,7 @@ define :opsworks_deploy do
             variables(:locals => {:sha => sha, :branch => deploy[:scm][:revision]}, :environment => node[:deploy][application][:rails_env])
 
             only_if do
-              File.exists?("#{app_root_path}/public/")
+              File.exists?("#{release_path}/public/")
             end
           end
 
