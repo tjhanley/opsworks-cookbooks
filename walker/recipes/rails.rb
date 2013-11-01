@@ -96,7 +96,7 @@ node[:deploy].each do |application, deploy|
   end
 
   execute "reload monit" do
-    command "monit reload"
+    command "/etc/init.d/monit restart"
   end
 
 end
