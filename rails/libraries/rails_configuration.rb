@@ -50,9 +50,13 @@ module OpsWorks
       end
     end
 
-    def self.write_sha_to_public(app_root_path)
-      Chef::Log.info("sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD >> #{app_root_path}/public/sha.html'")
+    def self.write_sha_to_public(app_root_path, branch)
+      Chef::Log.info("sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD > #{app_root_path}/public/sha.html'")
       Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /usr/bin/git rev-parse HEAD >> #{app_root_path}/public/sha.html 2>&1'`)
+      Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /bin/echo "<br>" >> #{app_root_path}/public/sha.html 2>&1'`)
+      Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /bin/echo #{branch} >> #{app_root_path}/public/sha.html 2>&1'`)
+      Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /bin/echo "<br>" >> #{app_root_path}/public/sha.html 2>&1'`)
+      Chef::Log.info(`sudo su deploy -c 'cd #{app_root_path} && /bin/date "+%c" >> #{app_root_path}/public/sha.html 2>&1'`)
     end
   end
 end
