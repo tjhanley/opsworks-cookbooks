@@ -167,7 +167,7 @@ define :opsworks_deploy do
             group deploy[:group]
             owner deploy[:user]
 
-            variables(:locals => {:sha => sha, :branch => deploy[:scm][:revision]})
+            variables(:locals => {:branch => deploy[:scm][:revision]})
 
             only_if do
               File.exists?("#{release_path}/public/")
